@@ -9,6 +9,8 @@ router.get('/:_id', getById);
 router.put('/:_id', updateQuestion);
 router.delete('/delete/:_id', deleteQuestion);
 
+module.exports = router;
+
 function getQuestions(req, res) {
     questionService.getAll()
         .then(function (questions) {
