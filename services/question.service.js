@@ -11,6 +11,7 @@ var service = {};
 
 service.getAll = getAll;
 service.create = create;
+service.getById = getById;
 
 module.exports = service;
 
@@ -50,6 +51,22 @@ function create(questionParam) {
                 deferred.resolve();
             });
     }
+
+    return deferred.promise;
+}
+
+function getById(_id) {
+    var deferred = Q.defer();
+
+    db.questions.findById(_id, function (err, question) {
+        if (err) deferred.reject(err.name + ': ' + err.message);
+
+        if (question) {
+            deferred.resolve(question);
+        } else {
+            deferred.resolve();
+        }
+    });
 
     return deferred.promise;
 }

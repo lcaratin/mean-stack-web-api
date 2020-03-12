@@ -5,6 +5,7 @@ var questionService = require('services/question.service');
 
 router.get('/getAll', getQuestions);
 router.post('/register', registerQuestion);
+router.get('/:_id', getById);
 
 function getQuestions(req, res) {
     questionService.getAll()
@@ -20,6 +21,20 @@ function registerQuestion(req, res) {
     questionService.create(req.body)
         .then(function () {
             res.sendStatus(200);
+        })
+        .catch(function (err) {
+            res.status(400).send(err);
+        });
+}
+
+function getById(req, res) {
+    questionService.getById(req.params._id)
+        .then(function (user) {
+            if (user) {
+                res.send(user);
+            } else {
+                res.sendStatus(404);
+            }
         })
         .catch(function (err) {
             res.status(400).send(err);
