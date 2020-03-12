@@ -12,6 +12,7 @@ var service = {};
 service.getAll = getAll;
 service.create = create;
 service.getById = getById;
+service.update = update;
 
 module.exports = service;
 
@@ -67,6 +68,47 @@ function getById(_id) {
             deferred.resolve();
         }
     });
+
+    return deferred.promise;
+}
+
+function update(_id, questionParam) {
+    var deferred = Q.defer();
+
+    db.questions.findById(_id, function (err, question) {
+        if (err) deferred.reject(err.name + ': ' + err.message);
+        if (question.subject !== questionParam.subject) {
+            db.questions.findOne(
+                { subject: questionParam.subject },
+                function (err, question) {
+                    if (err) deferred.reject(err.name + ': ' + err.message);
+                    if (question) {
+                        deferred.reject('Subject "' + question.subject + '" is already taken')
+                    } else {
+                        updateQuestion();
+                    }
+                });
+        } else {
+            updateQuestion();
+        }
+    });
+
+    function updateQuestion() {
+        // fields to update
+        var set = {
+            subject: questionParam.subject,
+            description: questionParam.description
+        };
+
+        db.questions.update(
+            { _id: mongo.helper.toObjectID(_id) },
+            { $set: set },
+            function (err, doc) {
+                if (err) deferred.reject(err.name + ': ' + err.message);
+
+                deferred.resolve();
+            });
+    }
 
     return deferred.promise;
 }
