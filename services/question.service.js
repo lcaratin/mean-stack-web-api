@@ -13,6 +13,7 @@ service.getAll = getAll;
 service.create = create;
 service.getById = getById;
 service.update = update;
+service.delete = _delete;
 
 module.exports = service;
 
@@ -109,6 +110,19 @@ function update(_id, questionParam) {
                 deferred.resolve();
             });
     }
+
+    return deferred.promise;
+}
+function _delete(_id) {
+    var deferred = Q.defer();
+
+    db.questions.remove(
+        { _id: mongo.helper.toObjectID(_id) },
+        function (err) {
+            if (err) deferred.reject(err.name + ': ' + err.message);
+
+            deferred.resolve();
+        });
 
     return deferred.promise;
 }
